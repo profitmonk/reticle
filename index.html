@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Accelerator architecture, GPU-accelerated EDA, RISC-V cores, and AI that verifies hardware.">
+<meta property="og:title" content="Silicon first">
+<meta property="og:description" content="Accelerator architecture, GPU-accelerated EDA, RISC-V cores, and AI that verifies hardware.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<style>
+  html{color-scheme:light dark}
+  body{margin:0}
+  img{max-width:100%}
+</style>
+<title>Silicon First</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#F4F5F6; --surface:#FFFFFF; --ink:#15181C; --muted:#646A72;
+  --rule:#E0E3E6; --accent:#8C4F2B; --accent-soft:#F7EDE6; --rail:#C9CDD2;
+  --sans:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  --disp:"Familjen Grotesk",var(--sans);
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#121417; --surface:#191C20; --ink:#E7E8E9; --muted:#9198A0;
+  --rule:#282C31; --accent:#CC8459; --accent-soft:#2A1D14; --rail:#3A4047;
+}}
+:root[data-theme="dark"]{
+  --ground:#121417; --surface:#191C20; --ink:#E7E8E9; --muted:#9198A0;
+  --rule:#282C31; --accent:#CC8459; --accent-soft:#2A1D14; --rail:#3A4047;
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);
+  font-size:15.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 22px 110px}
+
+header.top{padding:56px 0 26px}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--accent);margin:0 0 12px}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(34px,6vw,54px);
+  letter-spacing:-.025em;line-height:1.04;margin:0 0 16px;text-wrap:balance}
+.lede{font-size:17px;max-width:62ch;margin:0;color:var(--ink)}
+.lede + .lede{margin-top:14px;color:var(--muted)}
+
+.counts{display:flex;flex-wrap:wrap;gap:30px;margin:30px 0 0;padding:18px 0;
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.count b{font-family:var(--mono);font-weight:500;font-size:22px;display:block;
+  letter-spacing:-.02em}
+.count span{color:var(--muted);font-size:11.5px;text-transform:uppercase;
+  letter-spacing:.08em}
+
+section{margin:52px 0 0}
+.tier{display:flex;align-items:baseline;gap:14px;margin:0 0 6px}
+.tier h2{font-family:var(--disp);font-weight:700;font-size:23px;
+  letter-spacing:-.015em;margin:0}
+.tier .n{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.tier-note{color:var(--muted);max-width:64ch;margin:0 0 22px;font-size:14.5px}
+
+.proj{background:var(--surface);border:1px solid var(--rule);border-radius:9px;
+  padding:19px 21px;margin:0 0 13px;border-left:3px solid var(--rail)}
+.proj.lead{border-left-color:var(--accent)}
+.ph{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap;margin-bottom:3px}
+.ph h3{font-family:var(--mono);font-weight:500;font-size:15px;margin:0;
+  letter-spacing:-.01em}
+.vis{font-family:var(--mono);font-size:10.5px;color:var(--muted);
+  border:1px solid var(--rule);border-radius:3px;padding:0 5px}
+.thesis{margin:0 0 12px;font-size:15px}
+.thesis b{font-weight:600}
+dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0 0 12px;
+  font-size:13.5px}
+dt{font-family:var(--mono);font-size:11.5px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.05em;padding-top:2px}
+dd{margin:0}
+dd .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.stack{display:flex;flex-wrap:wrap;gap:5px}
+.stack span{font-family:var(--mono);font-size:10.5px;color:var(--muted);
+  background:var(--ground);border:1px solid var(--rule);border-radius:3px;
+  padding:1px 6px}
+.hf{background:var(--accent-soft);border-radius:5px;padding:9px 12px;
+  margin:12px 0 0;font-size:13.5px}
+.hf b{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.07em;color:var(--accent);display:block;margin-bottom:2px}
+.closing{margin-top:56px;padding-top:26px;border-top:1px solid var(--rule)}
+.closing h2{font-family:var(--disp);font-size:21px;margin:0 0 12px}
+.closing p{max-width:64ch;color:var(--muted)}
+.closing strong{color:var(--ink);font-weight:600}
+@media (max-width:560px){ dl{grid-template-columns:1fr;gap:2px} dt{padding-top:8px} }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <p class="eyebrow">github.com/profitmonk</p>
+  <h1>What I have been building, silicon first</h1>
+  <p class="lede">Most of my time goes into four things. An LLM inference accelerator
+  for models that do not fit on one die. A GPU-accelerated RTL-to-routing flow.
+  RISC-V cores. And AI agents that verify hardware, plus the benchmark that
+  scores them.</p>
+  <p class="lede">I work from the workload down. Pick the real model, work out what is
+  physically possible, then design the chip. Not the other way round.</p>
+  <div class="counts">
+    <div class="count"><b>40+</b><span>repositories</span></div>
+    <div class="count"><b>13</b><span>silicon and EDA</span></div>
+    <div class="count"><b>~900</b><span>commits in the top four</span></div>
+    <div class="count"><b>SV · Verilog · Sail</b><span>next to Python</span></div>
+  </div>
+</header>
+
+<section>
+  <div class="tier"><span class="n">01</span><h2>Accelerator architecture</h2></div>
+  <p class="tier-note">Designing for models too big for one die, where the package, the HBM
+  stack and the reticle limit are inputs rather than things you find out late.</p>
+
+  <div class="proj lead">
+    <div class="ph"><h3>llm-accelerator-codex-starter</h3><span class="vis">private</span></div>
+    <p class="thesis">A frontier-scale <b>LLM inference accelerator</b> for 100B to 1T+
+    parameter models. It runs from a validated workload model, through design-space
+    exploration, to an RTL shootout and an architecture freeze. I am not translating
+    CUDA to Verilog and I am not rebuilding a GPU.</p>
+    <dl>
+      <dt>Workload</dt><dd>gpt-oss-120b. The first target is low-latency autoregressive decode at low concurrency</dd>
+      <dt>Scope</dt><dd>multi-chip model residency, HBM, package constraints, scale-up comms, model partitioning. It extends to trillion-scale MoE</dd>
+      <dt>Constraints</dt><dd>die area, reticle class, SRAM density and banking, HBM controller and PHY cost, NoC. All of it priced from the start</dd>
+      <dt>Size</dt><dd><span class="num">149</span> commits, <span class="num">11</span> languages, <span class="num">623</span> MB</dd>
+    </dl>
+    <div class="stack"><span>SystemVerilog</span><span>Verilog</span><span>Python</span><span>C++</span><span>Metal</span><span>Tcl</span><span>formal</span></div>
+    <div class="hf"><b>For Hugging Face</b>The reference workload is gpt-oss-120b, a model you
+    host. The method is workload, then feasibility envelope, then architecture. That is the
+    question an inference team has to answer before it picks hardware.</div>
+  </div>
+
+  <div class="proj">
+    <div class="ph"><h3>tensor_accelerator</h3><span class="vis">public</span></div>
+    <p class="thesis">A synthesis-ready tensor processing unit. Four clusters in a 2×2 mesh,
+    each one a 16×16 systolic array.</p>
+    <dl>
+      <dt>Throughput</dt><dd><span class="num">409 GOPS</span> at <span class="num">200 MHz</span>, INT8 in, INT32 accumulate</dd>
+      <dt>Datapath</dt><dd><span class="num">256</span> INT8 MACs per cluster, a 64-lane vector unit for ReLU, GELU and Softmax, 2D DMA with strided access</dd>
+      <dt>Memory</dt><dd>2 MB of 16-bank multi-port SRAM, AXI4 out to DDR4 or LPDDR5, NoC with XY routing</dd>
+      <dt>Checking</dt><dd>a cycle-accurate Python model sits next to the RTL, so I can diff them</dd>
+    </dl>
+    <div class="stack"><span>Verilog</span><span>UltraScale+</span><span>Versal</span><span>Python model</span></div>
+  </div>
+
+  <div class="proj">
+    <div class="ph"><h3>neurotensor-1</h3><span class="vis">public</span></div>
+    <p class="thesis">Hardware and software co-design for an accelerator. Compiler, hardware
+    and benchmarks live in one tree so the ISA and the code generator get designed against
+    each other instead of one after the other. Smaller than the others and I would call it
+    a demonstrator.</p>
+    <div class="stack"><span>Python</span><span>compiler</span><span>hardware</span><span>benchmarks</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="tier"><span class="n">02</span><h2>GPU-accelerated EDA</h2></div>
+  <p class="tier-note">Speed up the stages where the maths is dense and parallel. Partition the
+  ones where it is not. Working out which is which is most of the job.</p>
+
+  <div class="proj lead">
+    <div class="ph"><h3>gpu-eda</h3><span class="vis">private</span></div>
+    <p class="thesis">A GPU-accelerated <b>RTL-to-routing flow</b>. I tensorized static timing
+    and global routing. Synthesis and detailed routing I partition instead, because
+    irregular graph rewriting and sequential conflict resolution do not become parallel
+    just because you want them to.</p>
+    <dl>
+      <dt>Timing</dt><dd>levelize once with Kahn, then arrival time is <span class="num">gather + scatter_reduce(amax)</span> per level and required time is the same with amin. A <span class="num">100k</span>-node, <span class="num">392k</span>-arc graph runs in about <span class="num">18 ms</span> on CPU, and that op shape is what saturates a GPU</dd>
+      <dt>Routing</dt><dd>both L-shape candidates for every net in the design costed at once, using cumsum prefix tables over the congestion map. PathFinder handles rip-up</dd>
+      <dt>Placement</dt><dd>DREAMPlace, unmodified. It is already PyTorch and CUDA native, so there was nothing to add</dd>
+      <dt>Size</dt><dd><span class="num">105</span> commits</dd>
+    </dl>
+    <div class="stack"><span>PyTorch</span><span>CUDA</span><span>Yosys</span><span>DREAMPlace</span><span>OpenTimer lineage</span></div>
+    <div class="hf"><b>For Hugging Face</b>This is ML systems thinking applied to EDA. Seeing
+    that static timing is a levelized scatter-reduce, and that global routing is a batched
+    prefix-sum problem, is the same kind of reframing that turns attention into a kernel.</div>
+  </div>
+</section>
+
+<section>
+  <div class="tier"><span class="n">03</span><h2>RISC-V cores</h2></div>
+  <p class="tier-note">A teaching core, a safety core I explored model-first, and a phased server
+  program. Each one has its verification contract written before the RTL.</p>
+
+  <div class="proj">
+    <div class="ph"><h3>lonestar-rvr-core</h3><span class="vis">private</span></div>
+    <p class="thesis">RV-R Core. <b>Model-first microarchitecture exploration</b> for an
+    R52-class RISC-V safety core. The performance model leads and the RTL only follows what
+    the model can justify.</p>
+    <dl>
+      <dt>Size</dt><dd><span class="num">444</span> commits, the one I have worked on hardest</dd>
+      <dt>Worth noting</dt><dd>Sail is in the toolchain, so the formal ISA spec is in the loop rather than sitting in a PDF</dd>
+    </dl>
+    <div class="stack"><span>Sail</span><span>C/C++</span><span>Assembly</span><span>Python</span></div>
+  </div>
+
+  <div class="proj">
+    <div class="ph"><h3>rv64-simple</h3><span class="vis">private</span></div>
+    <p class="thesis">A small synthesizable <b>RV64I_Zicsr</b> core in machine mode.
+    Multicycle, not pipelined, with precise synchronous exceptions and MRET.</p>
+    <dl>
+      <dt>What it leaves out</dt><dd>compressed instructions, M, A, F, virtual memory, caches, interrupts. Leaving them out is the point. It is meant to be read</dd>
+      <dt>Flow</dt><dd>Icarus for simulation, Verilator for lint, Yosys for synthesis, plus a bare-metal C and assembly example SoC</dd>
+    </dl>
+    <div class="stack"><span>SystemVerilog</span><span>Yosys</span><span>Verilator</span><span>Icarus</span></div>
+  </div>
+
+  <div class="proj">
+    <div class="ph"><h3>rv64-phase0</h3><span class="vis">private</span></div>
+    <p class="thesis">A phased <b>RV64 server program</b>. Simple core, then Linux, then
+    coherent multicore, then advanced execution, then a server platform, then scale and
+    physical evaluation. Phase 0 is the planning package: requirement seeds, a reuse matrix,
+    verification contracts and executable task contracts, all written before any RTL.</p>
+    <div class="stack"><span>OpenTitan</span><span>reuse matrix</span><span>verification contracts</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="tier"><span class="n">04</span><h2>AI that verifies hardware, and how to score it</h2></div>
+  <p class="tier-note">Agents that do verification work, and a benchmark that can tell you
+  whether they actually did it.</p>
+
+  <div class="proj lead">
+    <div class="ph"><h3>chipgpt-rl · CoreEval</h3><span class="vis">private</span></div>
+    <p class="thesis">An <b>evaluation benchmark and RL training environment</b> for models
+    doing chip design verification. It is not a demo of an agent. It is the harness that
+    decides whether one is any good.</p>
+    <dl>
+      <dt>Size</dt><dd><span class="num">98</span> commits</dd>
+      <dt>Environment</dt><dd>real RTL and a real toolchain in the loop. SystemVerilog and Verilog sit next to the Python, and the whole thing is Dockerised</dd>
+    </dl>
+    <div class="stack"><span>Python</span><span>SystemVerilog</span><span>Verilog</span><span>Docker</span><span>RL env</span></div>
+    <div class="hf"><b>For Hugging Face</b>A benchmark and an RL environment for a domain where
+    correctness is checkable by construction. Formal proof and simulation give you a real
+    answer, not a preference score. There are not many agent domains with a ground truth
+    that needs no human rater, and hardware verification is one of them.</div>
+  </div>
+
+  <div class="proj">
+    <div class="ph"><h3>chipgpt</h3><span class="vis">private</span></div>
+    <p class="thesis">An agentic <b>RTL and DV verification co-worker</b>. It reads the spec,
+    scans real public RTL, finds the bug, writes an SVA and a directed test, then emits a bug
+    card and a traceability row. Each bug carries a badge saying how it was proven, because
+    picking the right proof for each bug is the actual work.</p>
+    <dl>
+      <dt>Real bugs</dt><dd>the CVA6 Sv39 virtual address check off by one, <span class="num">[63:39]</span> where it should be <span class="num">[63:38]</span>. The HACK@DAC AES counter that never increments</dd>
+      <dt>Spread</dt><dd>six bugs across core, crypto, clock-domain crossing, bus fabric, networking and peripherals</dd>
+      <dt>Method</dt><dd>formal and simulation paired per bug, rather than one technique used everywhere</dd>
+    </dl>
+    <div class="stack"><span>Python</span><span>SystemVerilog</span><span>SVA</span><span>formal</span><span>CVA6</span><span>HACK@DAC</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="tier"><span class="n">05</span><h2>Things I have shipped</h2></div>
+  <p class="tier-note">Products, several of them public. The thread worth pulling is what you do
+  when a model writes something that goes out under your name.</p>
+
+  <div class="proj">
+    <div class="ph"><h3>high-intent-signals</h3><span class="vis">private</span></div>
+    <p class="thesis">A quantitative research and publishing pipeline. Survivorship-bias-free
+    backtests pick a weekly basket. A model writes the long-form research and it is
+    <b>gated before it can publish</b>: a second model fact-checks it adversarially,
+    coverage floors catch the sections that quietly shrink between drafts, and a scanner
+    looks for AI writing tells.</p>
+    <dl>
+      <dt>Distribution</dt><dd>threads are cut verbatim out of verified prose, so nothing new can be claimed downstream. Where a model does write, which is one opening line, a containment check proves it added no figure or name the source did not have</dd>
+      <dt>Running it</dt><dd>CI posts on a schedule and commits back what went out, so the state lives in the repo and not on a laptop</dd>
+    </dl>
+    <div class="stack"><span>Python</span><span>Next.js</span><span>GitHub Actions</span><span>Claude API</span><span>OpenRouter</span></div>
+    <div class="hf"><b>For Hugging Face</b>The useful part is the eval discipline. Every stage
+    has a checker that can fail it. The failures I actually hit are the interesting ones: a
+    verifier that hallucinated an error which was never in the source, and coverage that
+    regressed while the output got longer.</div>
+  </div>
+
+  <div class="proj">
+    <div class="ph"><h3>picoagent</h3><span class="vis">public</span></div>
+    <p class="thesis">Own your AI from any device. About 1,100 lines of Python that route
+    Telegram and web chat to Claude or Ollama. Docker, six security layers, persistent
+    memory, one command to start.</p>
+    <div class="stack"><span>Python</span><span>Docker</span><span>Ollama</span><span>Claude</span></div>
+  </div>
+
+  <div class="proj">
+    <div class="ph"><h3>circuitforge</h3><span class="vis">public</span></div>
+    <p class="thesis">Type what you want in plain English, get component selection out of a
+    28,000 part database, then a KiCad schematic and a checked BOM.</p>
+    <div class="stack"><span>FastAPI</span><span>Claude API</span><span>KiCad</span></div>
+  </div>
+
+  <div class="proj">
+    <div class="ph"><h3>worldmonitor · OpenTerminal</h3><span class="vis">public</span></div>
+    <p class="thesis">A real-time global intelligence dashboard with AI news aggregation and
+    geopolitical monitoring. And a Bloomberg-terminal-style trading dashboard running
+    entirely on free public data, no API keys and no subscriptions.</p>
+    <div class="stack"><span>TypeScript</span><span>React</span></div>
+  </div>
+</section>
+
+<div class="closing">
+  <h2>What I would want to talk about</h2>
+  <p>Three habits run through all of it.</p>
+  <p><strong>Start from the workload.</strong> The accelerator starts from gpt-oss-120b and a
+  feasibility envelope, not from whichever FPGA board was on the desk. It is the same idea as
+  profiling before you optimise, except the answer comes out as a package and an HBM stack.</p>
+  <p><strong>Be honest about what is parallel.</strong> gpu-eda speeds up static timing and
+  global routing, and leaves detailed routing alone, because detailed routing is sequential
+  conflict resolution and pretending otherwise wastes a year.</p>
+  <p><strong>Build the scorer before the agent.</strong> CoreEval is a benchmark and an RL
+  environment for hardware verification, where formal proof and simulation give you a real
+  answer instead of a rater's opinion. The same instinct shows up in the research pipeline,
+  where every stage has a gate that can fail it.</p>
+  <p>I would like to do this for the open source inference layer.</p>
+</div>
+</div>
+</body>
+</html>
